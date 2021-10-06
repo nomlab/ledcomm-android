@@ -1,0 +1,2 @@
+rootProject.name = "Torch_by_Camera2"
+include ':app'
