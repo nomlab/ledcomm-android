@@ -24,12 +24,22 @@ class MainActivity : AppCompatActivity() {
     var flash_freq = 1
     val h = Handler()
 
+    var data_idx = 0
+    val data = arrayOf(true,false,true,true)
+
     private val run = object : Runnable{
         var freq = flash_freq
         override fun run(){
-            manager.setTorchMode(cameraId, !flashOn)
-            if (flashFlag && 0 < freq) {
-                h.postDelayed(this, freq.toLong())
+//            manager.setTorchMode(cameraId, !flashOn)
+//            if (flashFlag && 0 < freq) {
+//                h.postDelayed(this, freq.toLong())
+//            }
+            if (data_idx < data.size){
+                manager.setTorchMode(cameraId, data[data_idx])
+                if (flashFlag && 0 < freq) {
+                    h.postDelayed(this, freq.toLong())
+                }
+                data_idx++
             }
         }
 
