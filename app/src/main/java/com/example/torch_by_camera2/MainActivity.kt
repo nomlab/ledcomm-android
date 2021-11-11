@@ -24,22 +24,45 @@ class MainActivity : AppCompatActivity() {
     var flash_freq = 1
     val h = Handler()
 
-    var data_idx = 0
-    val data = arrayOf(true,false,true,true)
+    var sig_idx = 0
+    val data = arrayOf(0,1,0,0,0,0,0,1)
+
+    private fun data2sig(data: Array<Int>): MutableList<Boolean> {
+        val sig = mutableListOf<Boolean>()
+        sig.add(true)
+        for (n in data){
+            sig.add(false)
+            for (i in 0..n){
+                sig.add(true)
+            }
+        }
+
+        sig.add(false)
+        for (i in 0..5){
+            sig.add(true)
+        }
+
+        return sig
+    }
 
     private val run = object : Runnable{
         var freq = flash_freq
+        var sig = data2sig(data)
         override fun run(){
 //            manager.setTorchMode(cameraId, !flashOn)
 //            if (flashFlag && 0 < freq) {
 //                h.postDelayed(this, freq.toLong())
 //            }
-            if (data_idx < data.size){
-                manager.setTorchMode(cameraId, data[data_idx])
+            if (sig_idx < sig.size){
+                manager.setTorchMode(cameraId, sig[sig_idx])
                 if (flashFlag && 0 < freq) {
                     h.postDelayed(this, freq.toLong())
                 }
-                data_idx++
+                sig_idx++
+            }else{
+                manager.setTorchMode(cameraId, false)
+                sig_idx = 0
+                flashFlag = false
             }
         }
 
