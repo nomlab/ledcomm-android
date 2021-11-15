@@ -6,6 +6,7 @@ import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
+import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.TextView
@@ -25,9 +26,49 @@ class MainActivity : AppCompatActivity() {
     val h = Handler()
 
     var sig_idx = 0
-    val data = arrayOf(0,1,0,0,0,0,0,1)
+    val data = listOf<Int>(0,1,0,0,0,0,0,1)
 
-    private fun data2sig(data: Array<Int>): MutableList<Boolean> {
+    val str = "ABCDE"
+
+    private fun dec2bin(dec: Int): List<Int>{
+        var n: Int = dec
+        val bin = mutableListOf<Int>()
+        while (n > 0){
+            bin.add(n % 2)
+            n /= 2
+        }
+        Log.d("dec2bin", "bin size : ${bin.size}")
+        while (bin.size < 8) {
+            bin.add(0, 0)
+        }
+
+        Log.d("dec2bin", "bin : $bin")
+
+        return bin
+    }
+
+    private fun bin2data(bin: List<Int>): List<Int>{
+        val data = mutableListOf<Int>()
+        for (element in bin){
+            data.add(element)
+        }
+
+        Log.d("bin2data", "data : $data")
+        return data
+    }
+
+    private fun str2data(str: String): MutableList<Int> {
+        val data = mutableListOf<Int>()
+        for (char in str){
+            data.addAll( bin2data(dec2bin(char.code)) )
+        }
+
+        Log.d("str2data", "data : $data")
+
+        return data
+    }
+
+    private fun data2sig(data: List<Int>): MutableList<Boolean> {
         val sig = mutableListOf<Boolean>()
         sig.add(true)
         for (n in data){
@@ -36,7 +77,6 @@ class MainActivity : AppCompatActivity() {
                 sig.add(true)
             }
         }
-
         sig.add(false)
         for (i in 0..5){
             sig.add(true)
@@ -47,7 +87,7 @@ class MainActivity : AppCompatActivity() {
 
     private val run = object : Runnable{
         var freq = flash_freq
-        var sig = data2sig(data)
+        var sig = data2sig( str2data(str) )
         override fun run(){
 //            manager.setTorchMode(cameraId, !flashOn)
 //            if (flashFlag && 0 < freq) {
